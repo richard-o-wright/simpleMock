@@ -1,4 +1,4 @@
-package net.wrightnz.testing.simple;
+package net.wrightnz.simple.testing;
 
 import static java.lang.reflect.Proxy.newProxyInstance;
 
@@ -21,7 +21,7 @@ public final class SimpleMocker {
         return (T) newProxyInstance(cl, interfaces, invocationHandler);
     }
 
-    public static <T>T mock(Class<T> c, Map<String, Object> responses) {
+    public static <T>T mock(final Class<T> c, final Map<String, Object> responses) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         Class<?>[] interfaces = new Class[] { c };
 

@@ -1,4 +1,4 @@
-package net.wrightnz.testing.simple;
+package net.wrightnz.simple.testing;
 
 public interface ExampleInterface {
 

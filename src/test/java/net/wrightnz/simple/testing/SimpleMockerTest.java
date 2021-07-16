@@ -1,4 +1,4 @@
-package net.wrightnz.testing.simple;
+package net.wrightnz.simple.testing;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
