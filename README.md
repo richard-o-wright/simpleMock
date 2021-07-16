@@ -15,13 +15,11 @@ I hope you might find this useful too!
 How to add to your project as Maven dependency:
 ```
 <dependency>
-	<groupId>net.wrightnz.testing.simple</groupId>
-	<artifactId>simplemock</artifactId>
-	<version>0.2.0-SNAPSHOT</version>
-	<scope>test</scope>
+  <groupId>net.wrightnz.simple.testing</groupId>
+  <artifactId>simplemock</artifactId>
+  <version>0.3.0-SNAPSHOT</version>
 </dependency>
 ```
-
 Thanks,
 Richard Wright (richard@wrightnz.net).
 
