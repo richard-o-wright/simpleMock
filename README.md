@@ -17,7 +17,7 @@ How to add to your project as Maven dependency:
 <dependency>
   <groupId>net.wrightnz.simple.testing</groupId>
   <artifactId>simplemock</artifactId>
-  <version>0.3.0-SNAPSHOT</version>
+  <version>0.3.1</version>
 </dependency>
 ```
 Thanks,
@@ -26,5 +26,5 @@ Richard Wright (richard@wrightnz.net).
 #### Notes to auther nexus publishing
 ```bash
 mvn -B package --file pom.xml
-mvn clean deploy -s {}/.m2/settings.xml
+mvn clean deploy -s C:\Users\richa\.m2\settings.xml
 ```
