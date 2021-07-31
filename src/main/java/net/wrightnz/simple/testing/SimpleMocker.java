@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+@SuppressWarnings("Convert2Lambda")
 public final class SimpleMocker {
 
     public static <T>T mock(Class<T> c) {
