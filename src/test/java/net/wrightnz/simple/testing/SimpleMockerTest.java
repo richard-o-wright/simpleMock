@@ -26,4 +26,15 @@ class SimpleMockerTest {
     String result = example.doSomething(1, "foo");
     assertEquals(expected, result);
   }
+
+
+    @Test
+  void testMockMethods() {
+    String expected = "Fish";
+    MockMethod<String> meth1 = new MockMethod<>("doSomething", expected);
+    ExampleInterface example = SimpleMocker.mock(ExampleInterface.class, meth1);
+    String result = example.doSomething(1, "");
+    assertEquals(expected, result);
+  }
+
 }
