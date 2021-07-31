@@ -24,8 +24,8 @@ How to add to your project as Maven dependency:
 Thanks,
 Richard Wright (richard@wrightnz.net).
 
-#### Notes to auther nexus publishing
+#### Notes to author nexus publishing
 ```bash
 mvn -B package --file pom.xml
-mvn clean deploy -s C:\Users\richa\.m2\settings.xml
+mvn clean deploy -s HOME\.m2\settings.xml
 ```
