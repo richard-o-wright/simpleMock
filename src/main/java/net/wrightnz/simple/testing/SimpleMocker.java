@@ -37,4 +37,24 @@ public final class SimpleMocker {
         };
         return (T) newProxyInstance(cl, interfaces, invocationHandler);
     }
+    
+        public static <T> T mock(final Class<T> c, final MockMethod... methods) {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        Class<?>[] interfaces = new Class[]{c};
+
+        InvocationHandler invocationHandler = new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                for (MockMethod meth : methods) {
+                    if (meth.getName().equals(method.getName())) {
+                        meth.incrementInvocationCount();
+                        return meth.getReturned();
+                    }
+                }
+                return null;
+            }
+        };
+        return (T) newProxyInstance(cl, interfaces, invocationHandler);
+    }
+        
 }
