@@ -47,6 +47,11 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.bcel</groupId>
+            <artifactId>bcel</artifactId>
+            <version>6.5.0</version>
+        </dependency>
         <!-- Testing only dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
