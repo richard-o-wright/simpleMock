@@ -30,7 +30,7 @@ public class MockMethod<T> {
     public T getReturned() {
         return returned;
     }
-    
+
     /**
      * @return the invocationCount
      */
@@ -39,7 +39,7 @@ public class MockMethod<T> {
     }
 
     /**
-     * 
+     *
      */
     public void incrementInvocationCount() {
         this.invocationCount++;

@@ -10,4 +10,24 @@ public class ExampleClass {
         return 0;
     }
 
+    public String getString(String str) {
+        return "test" + str;
+    }
+
+    public double getDouble(String str) {
+        return 0.0;
+    }
+
+    public float getFloat(String str) {
+        return 0.0F;
+    }
+
+    public long getLong(Object obj) {
+        return Long.MAX_VALUE;
+    }
+
+    public byte getByte(String str1, String str2) {
+        return Byte.MAX_VALUE;
+    }
+
 }
