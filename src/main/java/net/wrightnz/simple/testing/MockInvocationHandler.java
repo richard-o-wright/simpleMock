@@ -14,16 +14,16 @@ import java.lang.reflect.Method;
  */
 public class MockInvocationHandler implements InvocationHandler {
 
-    private final MockMethod[] methods;
+    private final MockMethod<?>[] methods;
 
-    public MockInvocationHandler(MockMethod... methods) {
+    public MockInvocationHandler(MockMethod<?>... methods) {
         this.methods = methods;
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) {
         if (methods != null) {
-            for (MockMethod meth : methods) {
+            for (MockMethod<?> meth : methods) {
                 if (meth.getName().equals(method.getName())) {
                     meth.incrementInvocationCount();
                     return meth.getReturned();

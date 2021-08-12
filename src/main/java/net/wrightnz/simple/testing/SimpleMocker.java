@@ -6,18 +6,20 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-@SuppressWarnings("Convert2Lambda")
 public final class SimpleMocker {
 
+    private SimpleMocker(){
+    }
+
     public static <T> T mock(final Class<T> c) throws FailedToMockException {
-        return mock(c, new MockMethod[0]);
+        return mock(c, new MockMethod<?>[0]);
     }
 
     public static <T> T mock(final Class<T> c, final Map<String, Object> responses) {
-        MockMethod[] methods = new MockMethod[responses.size()];
+        MockMethod<?>[] methods = new MockMethod[responses.size()];
         int i = 0;
         for (Map.Entry<String, Object> entry : responses.entrySet()) {
-            MockMethod method = new MockMethod(entry.getKey(), entry.getValue());
+            MockMethod<Object> method = new MockMethod<>(entry.getKey(), entry.getValue());
             methods[i] = method;
             i++;
         }
@@ -25,7 +27,7 @@ public final class SimpleMocker {
         return mock(c, methods);
     }
 
-    public static <T> T mock(final Class<T> c, MockMethod... methods) throws FailedToMockException {
+    public static <T> T mock(final Class<T> c, MockMethod<?>... methods) throws FailedToMockException {
         if (methods == null) {
             throw new FailedToMockException("MockMethod cannot be null", null);
         }
