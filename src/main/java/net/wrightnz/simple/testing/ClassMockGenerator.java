@@ -10,6 +10,7 @@ import static org.apache.bcel.Const.ACC_SUPER;
 
 import org.apache.bcel.generic.ALOAD;
 import org.apache.bcel.generic.ASTORE;
+import org.apache.bcel.generic.CHECKCAST;
 import org.apache.bcel.generic.ClassGen;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.DLOAD;
@@ -18,6 +19,7 @@ import org.apache.bcel.generic.FLOAD;
 import org.apache.bcel.generic.FSTORE;
 import org.apache.bcel.generic.ILOAD;
 import org.apache.bcel.generic.INVOKESPECIAL;
+import org.apache.bcel.generic.INVOKEVIRTUAL;
 import org.apache.bcel.generic.ISTORE;
 import org.apache.bcel.generic.InstructionFactory;
 import org.apache.bcel.generic.InstructionList;
@@ -279,6 +281,70 @@ public class ClassMockGenerator {
             il.append(new INVOKESPECIAL(constrIndex));
             il.append(new ALOAD(5));
         }
+        return il;
+    }
+
+    /**
+     * Converts a reference of a primitive wrapper object into a primitive value type.
+     * This method assumes that the wrapper object reference is already loaded at the
+     * top of the operand stack. The stack is modified so that the object reference
+     * to a primitive wrapper is replaced by the corresponding value in the stack.
+     *
+     * @param cp   constant pool
+     * @param type class name of the primitive wrapper object to convert
+     * @return an instruction list that replaces an object reference of a primitive
+     *     wrapper object to its corresponding value in the operand stack
+     */
+    protected static InstructionList convertObjectToPrimitive(ConstantPoolGen cp, String type) {
+        InstructionList il = new InstructionList();
+
+        int intValueIndex = cp.addMethodref(Integer.class.getName(), "intValue", "()I");
+        int byteValueIndex = cp.addMethodref(Byte.class.getName(), "byteValue", "()B");
+        int charValueIndex = cp.addMethodref(Character.class.getName(), "charValue", "()C");
+        int doubleValueIndex = cp.addMethodref(Double.class.getName(), "doubleValue", "()D");
+        int floatValueIndex = cp.addMethodref(Float.class.getName(), "floatValue", "()F");
+        int longValueIndex = cp.addMethodref(Long.class.getName(), "longValue", "()J");
+        int shortValueIndex = cp.addMethodref(Short.class.getName(), "shortValue", "()S");
+        int booleanValueIndex = cp.addMethodref(Boolean.class.getName(), "booleanValue", "()Z");
+
+        //
+        // Assumes the wrapper object reference is on top of the stack
+        //
+
+        if (type.equals(Integer.TYPE.getName())) {
+            int x = cp.addClass("java.lang.Integer");
+            il.append(new CHECKCAST(x));                                            // Stack:  => ..., type [Integer]
+            il.append(new INVOKEVIRTUAL(intValueIndex));                            // Stack:  => ..., value [int]
+        } else if (type.equals(Byte.TYPE.getName())) {
+            int x = cp.addClass("java.lang.Byte");
+            il.append(new CHECKCAST(x));                                            // Stack:  => ..., type [Boolean]
+            il.append(new INVOKEVIRTUAL(byteValueIndex));                           // Stack:  => ..., 0 | 1 [boolean]
+        } else if (type.equals(Character.TYPE.getName())) {
+            int x = cp.addClass("java.lang.Character");
+            il.append(new CHECKCAST(x));                                            // Stack:  => ..., type [Character]
+            il.append(new INVOKEVIRTUAL(charValueIndex));                           // Stack:  => ..., value [char]
+        } else if (type.equals(Double.TYPE.getName())) {
+            int x = cp.addClass("java.lang.Double");
+            il.append(new CHECKCAST(x));                                            // Stack:  => ..., type [Double]
+            il.append(new INVOKEVIRTUAL(doubleValueIndex));                         // Stack:  => ..., value [double]
+        } else if (type.equals(Float.TYPE.getName())) {
+            int x = cp.addClass("java.lang.Float");
+            il.append(new CHECKCAST(x));                                            // Stack:  => ..., type [Float]
+            il.append(new INVOKEVIRTUAL(floatValueIndex));                          // Stack:  => ..., value [float]
+        } else if (type.equals(Long.TYPE.getName())) {
+            int x = cp.addClass("java.lang.Long");
+            il.append(new CHECKCAST(x));                                            // Stack:  => ..., type [Long]
+            il.append(new INVOKEVIRTUAL(longValueIndex));                           // Stack:  => ..., value [long]
+        } else if (type.equals(Short.TYPE.getName())) {
+            int x = cp.addClass("java.lang.Short");
+            il.append(new CHECKCAST(x));                                            // Stack:  => ..., type [Short]
+            il.append(new INVOKEVIRTUAL(shortValueIndex));                          // Stack:  => ..., value [short]
+        } else if (type.equals(Boolean.TYPE.getName())) {
+            int x = cp.addClass("java.lang.Boolean");
+            il.append(new CHECKCAST(x));                                            // Stack:  => ..., type [Boolean]
+            il.append(new INVOKEVIRTUAL(booleanValueIndex));                        // Stack:  => ..., value [boolean]
+        }
+
         return il;
     }
 

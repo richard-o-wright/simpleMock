@@ -13,6 +13,10 @@ public class ExampleClass {
         return "test" + str;
     }
 
+    public boolean getBoolean() {
+        return Boolean.TRUE;
+    }
+
     public double getDouble(String str) {
         return 0.0;
     }
