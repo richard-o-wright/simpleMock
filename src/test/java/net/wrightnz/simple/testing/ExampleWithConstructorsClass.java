@@ -10,8 +10,8 @@ public class ExampleWithConstructorsClass {
 
     private final Point startingPoint;
 
-    public ExampleWithConstructorsClass() {
-        this.startingPoint = new Point(0, 0);
+    public ExampleWithConstructorsClass(int x, int y) {
+        this.startingPoint = new Point(x, y);
     }
 
     public ExampleWithConstructorsClass(Point startingPoint) {

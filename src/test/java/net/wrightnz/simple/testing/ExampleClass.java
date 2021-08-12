@@ -1,7 +1,6 @@
 package net.wrightnz.simple.testing;
 
 /**
- *
  * @author Richard Wright
  */
 public class ExampleClass {
@@ -29,5 +28,9 @@ public class ExampleClass {
     public byte getByte(String str1, String str2) {
         return Byte.MAX_VALUE;
     }
+
+    /* public Object getObject() {
+        return new Object();
+    } */
 
 }

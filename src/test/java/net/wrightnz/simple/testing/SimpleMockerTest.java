@@ -1,13 +1,11 @@
 package net.wrightnz.simple.testing;
 
-import java.awt.Point;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,32 +49,28 @@ class SimpleMockerTest {
     }
 
     @Test
-    void testMockClassMethods() {
-        int expected = 0;
+    void testMockClass() {
         // Mock an Class
         ExampleClass example = SimpleMocker.mock(ExampleClass.class);
-        // Call the mocked method on the mocked interface.
-        int result = example.zero(10);
-
         // Check the expected mock result was also returned.
-        assertEquals(expected, result);
+        assertEquals(0, example.zero(10));
+        assertEquals("-", example.getString("1"));
+        assertEquals(0.0D, example.getDouble("1"));
     }
 
-    // @Test
-    void testMockClassWithContructorMethods() {
-        try {
-            // Mock an Class
-            ExampleWithConstructorClass example = SimpleMocker.mock(ExampleWithConstructorClass.class);
-            fail("Exception should be thrown before reaching this point");
-        } catch (FailedToMockException e) {
-            System.out.println(e.getMessage());
-            boolean result = e.getMessage().contains(
-                    "it's currently only possible to mock null contructor classes with SimpleMock"
-            );
-            assertTrue(result);
-        }
-    }
 
+    @Test
+    void testMockClassWithMockMethods() {
+        String expected = "Fish";
+        // Mock a method
+        MockMethod<String> meth1 = new MockMethod<>("getString", expected);
+        // Mock an Class
+        ExampleClass example = SimpleMocker.mock(ExampleClass.class, meth1);
+        // Check the expected mock result was also returned.
+        assertEquals(0, example.zero(10));
+        assertEquals(expected, example.getString("1"));
+        assertEquals(0.0D, example.getDouble("1"));
+    }
 
     // @Test
     void testMockClassWithContructorsMethods() {
