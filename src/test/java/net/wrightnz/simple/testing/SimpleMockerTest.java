@@ -53,7 +53,7 @@ class SimpleMockerTest {
         // Mock an Class
         ExampleClass example = SimpleMocker.mock(ExampleClass.class);
         // Check the expected mock result was also returned.
-        assertEquals(0, example.zero(10));
+        assertEquals(0, example.getInt(10));
         assertEquals("-", example.getString("1"));
         assertEquals(0.0D, example.getDouble("1"));
     }
@@ -61,15 +61,26 @@ class SimpleMockerTest {
 
     @Test
     void testMockClassWithMockMethods() {
-        String expected = "Fish";
+        String expectedStr = "Fish";
+        char expectedChar = 'z';
+        double expectedDouble = 3.14234;
+        byte expectedByte = 7;
         // Mock a method
-        MockMethod<String> meth1 = new MockMethod<>("getString", expected);
+        MockMethod<Integer> getInt = new MockMethod<>("getInt", 42);
+        MockMethod<String> getString = new MockMethod<>("getString", expectedStr);
+        MockMethod<Character> getChar = new MockMethod<>("getChar", expectedChar);
+        MockMethod<Double> getDouble = new MockMethod<>("getDouble", expectedDouble);
+        MockMethod<Byte> getByte = new MockMethod<>("getByte", expectedByte);
+        MockMethod<Boolean> getBoolean = new MockMethod<>("getBoolean", Boolean.TRUE);
         // Mock an Class
-        ExampleClass example = SimpleMocker.mock(ExampleClass.class, meth1);
+        ExampleClass example = SimpleMocker.mock(ExampleClass.class, getInt, getString, getChar, getDouble, getByte, getBoolean);
         // Check the expected mock result was also returned.
-        assertEquals(0, example.zero(10));
-        assertEquals(expected, example.getString("1"));
-        assertEquals(0.0D, example.getDouble("1"));
+        assertEquals(42, example.getInt(10));
+        assertEquals(expectedStr, example.getString("1"));
+        assertEquals(expectedDouble, example.getDouble("1"));
+        assertEquals(expectedChar, example.getChar());
+        assertEquals(expectedByte, example.getByte("", ""));
+        assertEquals(Boolean.TRUE, example.getBoolean());
     }
 
     // @Test

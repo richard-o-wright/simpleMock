@@ -54,9 +54,13 @@ public class ClassMockGenerator {
         ConstantPoolGen cp = cg.getConstantPool();
 
         for (Method method : clazz.getMethods()) {
-            MockMethod<?> mockMethod = getMockMethod(method, methods);
             if (!DO_NOT_MOCK_METHODS.contains(method.getName())) {
-                cg.addMethod(generateMethod(cp, className, method, mockMethod));
+                cg.addMethod(generateMethod(
+                    cp,
+                    className,
+                    method,
+                    getMockMethod(method, methods)
+                ));
             }
         }
 
@@ -118,7 +122,9 @@ public class ClassMockGenerator {
             }
         }
         if (returnType.equals(Type.CHAR)) {
+            System.out.printf(">>>>>>>>>> mockMethod: %s %n", mockMethod);
             if (mockMethod != null && mockMethod.getReturned() != null) {
+                System.out.printf(">>>>>>>>>> %c %n", ((Character) mockMethod.getReturned()).charValue());
                 code.append(new PUSH(constantPool, ((Character) mockMethod.getReturned()).charValue()));
             } else {
                 code.append(new PUSH(constantPool, Character.MIN_VALUE));
@@ -169,12 +175,46 @@ public class ClassMockGenerator {
 
     private static MockMethod<?> getMockMethod(Method method, MockMethod<?>... mocks) {
         for (MockMethod<?> mock : mocks) {
-            if (mock.getName().equals(method.getName())
-                && mock.getReturned().getClass().getTypeName().equals(method.getReturnType().getName())) {
-                return mock;
+            Class<?> mockReturnedClass = mock.getReturned().getClass();
+            Class<?> expectedReturnedType = method.getReturnType();
+            if (mock.getName().equals(method.getName())) {
+                if (isSameType(mockReturnedClass, expectedReturnedType)) {
+                    return mock;
+                }
             }
         }
         return null;
+    }
+
+    private static boolean isSameType(Class<?> mockReturnedClass, Class<?> expectedReturnedType) {
+        System.out.printf(">>> mockReturnedClass: %s, expectedReturnType: %s %n", mockReturnedClass, expectedReturnedType);
+        if (expectedReturnedType.isPrimitive()) {
+            if ("java.lang.Integer".equals(mockReturnedClass.getCanonicalName()) && "int".equals(expectedReturnedType.toString())) {
+                return true;
+            }
+            if ("java.lang.Double".equals(mockReturnedClass.getCanonicalName()) && "double".equals(expectedReturnedType.toString())) {
+                return true;
+            }
+            if ("java.lang.Character".equals(mockReturnedClass.getCanonicalName()) && "char".equals(expectedReturnedType.toString())) {
+                return true;
+            }
+            if ("java.lang.Float".equals(mockReturnedClass.getCanonicalName()) && "float".equals(expectedReturnedType.toString())) {
+                return true;
+            }
+            if ("java.lang.Byte".equals(mockReturnedClass.getCanonicalName()) && "byte".equals(expectedReturnedType.toString())) {
+                return true;
+            }
+            if ("java.lang.Long".equals(mockReturnedClass.getCanonicalName()) && "long".equals(expectedReturnedType.toString())) {
+                return true;
+            }
+            if ("java.lang.Boolean".equals(mockReturnedClass.getCanonicalName()) && "boolean".equals(expectedReturnedType.toString())) {
+                return true;
+            }
+        }
+        if (mockReturnedClass.getTypeName().equals(expectedReturnedType.getName())) {
+            return true;
+        }
+        return false;
     }
 
     /**
