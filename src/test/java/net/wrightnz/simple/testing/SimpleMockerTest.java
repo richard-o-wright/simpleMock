@@ -56,6 +56,7 @@ class SimpleMockerTest {
         assertEquals(0, example.getInt(10));
         assertEquals("-", example.getString("1"));
         assertEquals(0.0D, example.getDouble("1"));
+        assertEquals(null, example.getObject());
     }
 
 
@@ -81,6 +82,7 @@ class SimpleMockerTest {
         assertEquals(expectedChar, example.getChar());
         assertEquals(expectedByte, example.getByte("", ""));
         assertEquals(Boolean.TRUE, example.getBoolean());
+        assertEquals(null, example.getObject());
     }
 
     // @Test

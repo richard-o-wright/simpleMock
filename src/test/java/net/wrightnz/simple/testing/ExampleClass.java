@@ -1,5 +1,7 @@
 package net.wrightnz.simple.testing;
 
+import java.awt.*;
+
 /**
  * @author Richard Wright
  */
@@ -40,8 +42,13 @@ public class ExampleClass {
         return "test-" + str;
     }
 
-    /* public Object getObject() {
+    public Object getObject() {
         return new Object();
-    } */
+    }
+
+    public Point zeroPoint(Point p) {
+        p.setLocation(new Point(0, 0));
+        return p;
+    }
 
 }
