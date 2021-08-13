@@ -18,14 +18,8 @@ How to add to your project as Maven dependency:
 <dependency>
   <groupId>net.wrightnz.simple.testing</groupId>
   <artifactId>simplemock</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0-SNAPSHOT</version>
 </dependency>
 ```
 Thanks,
 Richard Wright (richard@wrightnz.net).
-
-#### Notes to author nexus publishing
-```bash
-mvn -B package --file pom.xml
-mvn clean deploy -s HOME\.m2\settings.xml
-```
