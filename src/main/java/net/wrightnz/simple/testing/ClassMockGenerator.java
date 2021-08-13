@@ -9,7 +9,6 @@ import static org.apache.bcel.Const.ACC_PUBLIC;
 import static org.apache.bcel.Const.ACC_SUPER;
 
 import org.apache.bcel.Const;
-import org.apache.bcel.Constants;
 import org.apache.bcel.generic.ACONST_NULL;
 import org.apache.bcel.generic.ALOAD;
 import org.apache.bcel.generic.ASTORE;
@@ -86,14 +85,13 @@ public class ClassMockGenerator {
 
   private static org.apache.bcel.classfile.Method generateNullConstructor(ConstantPoolGen cpg, String className, String superClass, Parameter[] parameters) {
     Type returnType = Type.VOID;
-    String methodName = "<init>";
     InstructionList code = generateNullConstructorCode(cpg, superClass, parameters);
     MethodGen methodGen = new MethodGen(
         ACC_PUBLIC,
         returnType,
         new Type[0],
         new String[0],
-        methodName,
+        MockConsts.CONSTRUCTOR_METHOD_NAME,
         className,
         code,
         cpg
@@ -116,7 +114,7 @@ public class ClassMockGenerator {
     Type[] argTypes = paramTypes.toArray(new Type[0]);
     String[] argNames = paramNames.toArray(new String[0]);
 
-    InstructionList code = generateCode(cpg, className, argTypes, returnType, mockMethod, false);
+    InstructionList code = generateCode(cpg, className, argTypes, returnType, mockMethod);
 
     MethodGen methodGen = new MethodGen(
         flags,
@@ -143,9 +141,9 @@ public class ClassMockGenerator {
 
     InstructionList code = new InstructionList();
     InstructionFactory factory = new InstructionFactory(constantPool);
-    code.append(factory.createLoad(Type.OBJECT, 0));
+    code.append(InstructionFactory.createLoad(Type.OBJECT, 0));
     for (Type argType : argTypes) {
-      Object value = MockMethodUtils.TYPE_2_DEFAULT_VALUE.get(argType);
+      Object value = MockConsts.TYPE_2_DEFAULT_VALUE.get(argType);
       if (argType.equals(Type.INT)) {
         code.append(new PUSH(constantPool, (int) value));
       } else if (argType.equals(Type.LONG)) {
@@ -162,21 +160,15 @@ public class ClassMockGenerator {
         code.append(new PUSH(constantPool, (String) value));
       }
     }
-    code.append(factory.createInvoke(superClass, "<init>", Type.VOID, argTypes, Const.INVOKESPECIAL));
-    code.append(factory.createReturn(Type.VOID));
+    code.append(factory.createInvoke(superClass, MockConsts.CONSTRUCTOR_METHOD_NAME, Type.VOID, argTypes, Const.INVOKESPECIAL));
+    code.append(InstructionFactory.createReturn(Type.VOID));
     return code;
   }
 
 
-  private static InstructionList generateCode(ConstantPoolGen constantPool, String className, Type[] argTypes, Type returnType, MockMethod mockMethod, boolean isConstructor) {
+  private static InstructionList generateCode(ConstantPoolGen constantPool, String className, Type[] argTypes, Type returnType, MockMethod mockMethod) {
     InstructionList code = new InstructionList();
-    InstructionFactory factory = new InstructionFactory(constantPool);
-    if (isConstructor) {
-      code.append(factory.createLoad(Type.OBJECT, 0));
-      code.append(factory.createInvoke(className, "<init>", Type.VOID, Type.NO_ARGS, Constants.INVOKESPECIAL));
-      code.append(factory.createReturn(Type.VOID));
-      return code;
-    } else if (returnType.equals(Type.BOOLEAN)) {
+    if (returnType.equals(Type.BOOLEAN)) {
       if (mockMethod != null && mockMethod.getReturned() != null) {
         code.append(new PUSH(constantPool, Boolean.valueOf(mockMethod.getReturned().toString())));
       } else {
@@ -241,7 +233,6 @@ public class ClassMockGenerator {
       code.append(new NEW(constantPool.addClass(returnType.toString())));
       code.append(new ACONST_NULL());
     }
-
     code.append(InstructionFactory.createReturn(returnType));
     return code;
   }

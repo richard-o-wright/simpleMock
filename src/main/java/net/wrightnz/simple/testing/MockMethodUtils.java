@@ -3,28 +3,10 @@ package net.wrightnz.simple.testing;
 import org.apache.bcel.generic.Type;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public final class MockMethodUtils {
-
-  public static final Map<Type, Object> TYPE_2_DEFAULT_VALUE = new HashMap<>();
-
-  static {
-    TYPE_2_DEFAULT_VALUE.put(Type.INT, 0);
-    TYPE_2_DEFAULT_VALUE.put(Type.DOUBLE, 0.0D);
-    TYPE_2_DEFAULT_VALUE.put(Type.CHAR, 0);
-    TYPE_2_DEFAULT_VALUE.put(Type.FLOAT, 0.0F);
-    TYPE_2_DEFAULT_VALUE.put(Type.BYTE, 0);
-    TYPE_2_DEFAULT_VALUE.put(Type.LONG, 0L);
-    TYPE_2_DEFAULT_VALUE.put(Type.BOOLEAN, Boolean.FALSE);
-    TYPE_2_DEFAULT_VALUE.put(Type.OBJECT, new Object());
-    TYPE_2_DEFAULT_VALUE.put(Type.STRING, "");
-    TYPE_2_DEFAULT_VALUE.put(Type.SHORT, 0);
-    TYPE_2_DEFAULT_VALUE.put(Type.STRINGBUFFER, null);
-    TYPE_2_DEFAULT_VALUE.put(Type.THROWABLE, null);
-  }
 
   public static final Map<String, String> WRAPPER_3_PRIMITIVE = Map.of(
       "java.lang.Integer", "int",
@@ -58,7 +40,7 @@ public final class MockMethodUtils {
     Object[] args = new Object[paramTypes.size()];
     for (int i = 0; i < args.length; i++) {
       Type paramType = paramTypes.get(i);
-      args[i] = TYPE_2_DEFAULT_VALUE.get(paramType);
+      args[i] = MockConsts.TYPE_2_DEFAULT_VALUE.get(paramType);
     }
     // For Debugging: System.out.printf(">>>>> Args length %d %n", args.length);
     return args;
@@ -73,7 +55,7 @@ public final class MockMethodUtils {
         return true;
       }
     }
-    return mockReturnedClass.getTypeName().equals(expectedReturnedType.getName());
+    return mockReturnedClass.getTypeName().equals(expectedReturnedType.getTypeName());
   }
 
 }
