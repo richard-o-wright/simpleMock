@@ -41,6 +41,7 @@ public final class SimpleMocker {
         try {
             return ClassMockGenerator.createSubClass(c, methods);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException e) {
+            e.printStackTrace();
             throw new FailedToMockException("Failed to create mock instance of: " + c.getName(), e);
         }
     }

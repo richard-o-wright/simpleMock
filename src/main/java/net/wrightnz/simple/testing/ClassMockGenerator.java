@@ -8,6 +8,8 @@ package net.wrightnz.simple.testing;
 import static org.apache.bcel.Const.ACC_PUBLIC;
 import static org.apache.bcel.Const.ACC_SUPER;
 
+import org.apache.bcel.Const;
+import org.apache.bcel.Constants;
 import org.apache.bcel.generic.ACONST_NULL;
 import org.apache.bcel.generic.ALOAD;
 import org.apache.bcel.generic.ASTORE;
@@ -37,7 +39,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Richard Wright
@@ -46,43 +47,60 @@ public class ClassMockGenerator {
 
   private static final List<String> DO_NOT_MOCK_METHODS = List.of("getClass", "wait", "notify", "notifyAll");
 
-  private static final Map<String, String> WRAPPER_3_PRIMITIVE = Map.of(
-      "java.lang.Integer", "int",
-      "java.lang.Double", "double",
-      "java.lang.Character", "char",
-      "java.lang.Float", "float",
-      "java.lang.Byte", "byte",
-      "java.lang.Long", "long",
-      "java.lang.Boolean", "boolean"
-  );
-
   public static <T> T createSubClass(final Class<T> clazz, final MockMethod<?>... methods)
       throws NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
       ClassNotFoundException {
-    String className = clazz.getName() + "Sub";
 
-    ClassGen cg = new ClassGen(className, clazz.getName(), "<generated>", ACC_PUBLIC | ACC_SUPER, null);
-    cg.addEmptyConstructor(ACC_PUBLIC);
+    String subclassName = clazz.getName() + "Sub";
+
+    ClassGen cg = new ClassGen(subclassName, clazz.getName(), "<generated>", ACC_PUBLIC | ACC_SUPER, null);
     ConstantPoolGen cp = cg.getConstantPool();
+
+    Parameter[] parameters = clazz.getConstructors()[0].getParameters();
+    if (parameters.length == 0) {
+      cg.addEmptyConstructor(ACC_PUBLIC);
+    } else {
+      cg.addMethod(generateNullConstructor(cp, subclassName, clazz.getName(), parameters));
+    }
 
     for (Method method : clazz.getMethods()) {
       if (!DO_NOT_MOCK_METHODS.contains(method.getName())) {
         cg.addMethod(generateMethod(
             cp,
-            className,
+            subclassName,
             method,
-            getMockMethod(method, methods)
+            MockMethodUtils.getMockMethod(method, methods)
         ));
       }
     }
 
-    // For Debugging: System.out.printf("########## JavaClass: %s %n", cg.getJavaClass());
+    // For Debugging:
+    System.out.printf("########## JavaClass: %s %n", cg.getJavaClass());
     ByteClassLoader byteClassLoader = new ByteClassLoader(SimpleMocker.class.getClassLoader());
-    byteClassLoader.loadDataInBytes(className, cg.getJavaClass().getBytes());
+    byteClassLoader.loadDataInBytes(subclassName, cg.getJavaClass().getBytes());
 
-    Class loadedClass = byteClassLoader.loadClass(className);
+    Class loadedClass = byteClassLoader.loadClass(subclassName);
     Constructor<T> constructor = loadedClass.getConstructor();
     return constructor.newInstance();
+  }
+
+  private static org.apache.bcel.classfile.Method generateNullConstructor(ConstantPoolGen cpg, String className, String superClass, Parameter[] parameters) {
+    Type returnType = Type.VOID;
+    String methodName = "<init>";
+    InstructionList code = generateNullConstructorCode(cpg, superClass, parameters);
+    MethodGen methodGen = new MethodGen(
+        ACC_PUBLIC,
+        returnType,
+        new Type[0],
+        new String[0],
+        methodName,
+        className,
+        code,
+        cpg
+    );
+    methodGen.setMaxStack();
+    methodGen.setMaxLocals();
+    return methodGen.getMethod();
   }
 
   private static org.apache.bcel.classfile.Method generateMethod(ConstantPoolGen cpg, String className, Method method, MockMethod<?> mockMethod) {
@@ -98,7 +116,7 @@ public class ClassMockGenerator {
     Type[] argTypes = paramTypes.toArray(new Type[0]);
     String[] argNames = paramNames.toArray(new String[0]);
 
-    InstructionList code = generateCode(cpg, argTypes, returnType, mockMethod);
+    InstructionList code = generateCode(cpg, className, argTypes, returnType, mockMethod, false);
 
     MethodGen methodGen = new MethodGen(
         flags,
@@ -113,13 +131,52 @@ public class ClassMockGenerator {
 
     methodGen.setMaxStack();
     methodGen.setMaxLocals();
-
     return methodGen.getMethod();
   }
 
-  private static InstructionList generateCode(ConstantPoolGen constantPool, Type[] argTypes, Type returnType, MockMethod mockMethod) {
+  private static InstructionList generateNullConstructorCode(ConstantPoolGen constantPool, String superClass, Parameter[] parameters) {
+    List<Type> paramTypes = new ArrayList<>();
+    for (Parameter param : parameters) {
+      paramTypes.add(Type.getType(param.getType()));
+    }
+    Type[] argTypes = paramTypes.toArray(new Type[0]);
+
     InstructionList code = new InstructionList();
-    if (returnType.equals(Type.BOOLEAN)) {
+    InstructionFactory factory = new InstructionFactory(constantPool);
+    code.append(factory.createLoad(Type.OBJECT, 0));
+    for (Type argType : argTypes) {
+      Object value = MockMethodUtils.TYPE_2_DEFAULT_VALUE.get(argType);
+      if (argType.equals(Type.INT)) {
+        code.append(new PUSH(constantPool, (int) value));
+      } else if (argType.equals(Type.LONG)) {
+        code.append(new PUSH(constantPool, (long) value));
+      } else if (argType.equals(Type.FLOAT)) {
+        code.append(new PUSH(constantPool, (float) value));
+      } else if (argType.equals(Type.DOUBLE)) {
+        code.append(new PUSH(constantPool, (double) value));
+      } else if (argType.equals(Type.SHORT)) {
+        code.append(new PUSH(constantPool, (short) value));
+      } else if (argType.equals(Type.BOOLEAN)) {
+        code.append(new PUSH(constantPool, (boolean) value));
+      } else if (argType.equals(Type.STRING)) {
+        code.append(new PUSH(constantPool, (String) value));
+      }
+    }
+    code.append(factory.createInvoke(superClass, "<init>", Type.VOID, argTypes, Const.INVOKESPECIAL));
+    code.append(factory.createReturn(Type.VOID));
+    return code;
+  }
+
+
+  private static InstructionList generateCode(ConstantPoolGen constantPool, String className, Type[] argTypes, Type returnType, MockMethod mockMethod, boolean isConstructor) {
+    InstructionList code = new InstructionList();
+    InstructionFactory factory = new InstructionFactory(constantPool);
+    if (isConstructor) {
+      code.append(factory.createLoad(Type.OBJECT, 0));
+      code.append(factory.createInvoke(className, "<init>", Type.VOID, Type.NO_ARGS, Constants.INVOKESPECIAL));
+      code.append(factory.createReturn(Type.VOID));
+      return code;
+    } else if (returnType.equals(Type.BOOLEAN)) {
       if (mockMethod != null && mockMethod.getReturned() != null) {
         code.append(new PUSH(constantPool, Boolean.valueOf(mockMethod.getReturned().toString())));
       } else {
@@ -189,30 +246,9 @@ public class ClassMockGenerator {
     return code;
   }
 
-  private static MockMethod<?> getMockMethod(Method method, MockMethod<?>... mocks) {
-    for (MockMethod<?> mock : mocks) {
-      Class<?> mockReturnedClass = mock.getReturned().getClass();
-      Class<?> expectedReturnedType = method.getReturnType();
-      if (mock.getName().equals(method.getName()) && isSameType(mockReturnedClass, expectedReturnedType)) {
-        return mock;
-      }
-    }
-    return null;
-  }
 
-  private static boolean isSameType(Class<?> mockReturnedClass, Class<?> expectedReturnedType) {
-    // For Debugging: System.out.printf(">>> mockReturnedClass: %s, expectedReturnType: %s %n", mockReturnedClass, expectedReturnedType);
-    if (expectedReturnedType.isPrimitive()) {
-      String primitiveType = WRAPPER_3_PRIMITIVE.get(mockReturnedClass.getCanonicalName());
-      if (expectedReturnedType.toString().equals(primitiveType)) {
-        return true;
-      }
-    }
-    if (mockReturnedClass.getTypeName().equals(expectedReturnedType.getName())) {
-      return true;
-    }
-    return false;
-  }
+
+
 
   /**
    * Converts a primitive into its corresponding object wrapper reference.

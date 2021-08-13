@@ -7,7 +7,11 @@ import java.awt.*;
  */
 public class ExampleClass {
 
-    public ExampleClass(){
+    /*public ExampleClass(){
+    }*/
+
+    public ExampleClass(String str1, String str2){
+
     }
 
     public boolean getBoolean() {

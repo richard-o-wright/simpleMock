@@ -85,16 +85,14 @@ class SimpleMockerTest {
         assertEquals(null, example.getObject());
     }
 
-    // @Test
+    @Test
     void testMockClassWithContructorsMethods() {
-        Point expected = new Point(0, 0);
         // Mock an Class
         ExampleWithConstructorsClass example = SimpleMocker.mock(ExampleWithConstructorsClass.class);
         // Call the mocked method on the mocked interface.
-        Point result = example.zeroPoint(new Point(10, 10));
-
+        Point result = example.zeroPoint();
         // Check the expected mock result was also returned.
-        assertEquals(expected, result);
+        assertEquals(null, result);
     }
 
 }
