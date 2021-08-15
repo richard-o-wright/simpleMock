@@ -18,7 +18,7 @@ How to add to your project as Maven dependency:
 <dependency>
   <groupId>net.wrightnz.simple.testing</groupId>
   <artifactId>simplemock</artifactId>
-  <version>1.3.0-RC</version>
+  <version>1.3.1</version>
 </dependency>
 ```
 Thanks,
