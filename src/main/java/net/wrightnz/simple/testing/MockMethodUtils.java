@@ -1,16 +1,17 @@
 package net.wrightnz.simple.testing;
 
-import java.lang.reflect.Method;
-import java.util.Map;
+import org.apache.bcel.Const;
 import org.apache.bcel.generic.ACONST_NULL;
-import org.apache.bcel.generic.ASTORE;
 import org.apache.bcel.generic.ConstantPoolGen;
+import org.apache.bcel.generic.InstructionConst;
 import org.apache.bcel.generic.InstructionFactory;
 import org.apache.bcel.generic.InstructionList;
-import org.apache.bcel.generic.LocalVariableGen;
-import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.PUSH;
 import org.apache.bcel.generic.Type;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.Map;
 
 public final class MockMethodUtils {
 
@@ -54,11 +55,11 @@ public final class MockMethodUtils {
     return true;
   }
   
-  public static void pushType(ConstantPoolGen constantPool, InstructionFactory factory, InstructionList code, Type returnType, MethodGen method, MockMethod<?> mockMethod) {
+  public static void pushType(ConstantPoolGen constantPool, InstructionFactory factory, InstructionList code, Type returnType, MockMethod<?> mockMethod) {
+    // For Debugging: System.out.printf("Called: pushType(ConstantPoolGen, InstructionFactory, InstructionList, %s, %s)%n", returnType, mockMethod);
     Object value = MockConsts.TYPE_2_DEFAULT_VALUE.get(returnType);
     if (returnType.equals(Type.BOOLEAN)) {
       if (mockMethod != null && mockMethod.getReturned() != null) {
-        // code.append(factory.createInvoke(MockMethod.class.getName(), "incrementInvocationCount()", Type.VOID, new Type[0], Const.INVOKESPECIAL));
         code.append(new PUSH(constantPool, Boolean.valueOf(mockMethod.getReturned().toString())));
       } else {
         code.append(new PUSH(constantPool, (boolean)value));
@@ -70,7 +71,6 @@ public final class MockMethodUtils {
         code.append(new PUSH(constantPool, (byte)value));
       }
     } else if (returnType.equals(Type.CHAR)) {
-      // For Debugging: System.out.printf(">>>>>>>>>> mockMethod: %s %n", mockMethod);
       if (mockMethod != null && mockMethod.getReturned() != null) {
         // For Debugging: System.out.printf(">>>>>>>>>> %c %n", ((Character) mockMethod.getReturned()).charValue());
         code.append(new PUSH(constantPool, ((Character) mockMethod.getReturned())));
@@ -109,26 +109,29 @@ public final class MockMethodUtils {
       }
     } else {
       if (mockMethod != null) {
-
-        final LocalVariableGen exc = method.addLocalVariable("foo", returnType, null, null);
-        final int slot = exc.getIndex();
-        code.append(new ASTORE(slot));
-
-        // mockMethod.getReturned().getClass()
-        /*final int out = constantPool.addFieldref("java.lang.System", "out", 
-                                         "L" + mockMethod.getReturned().getClass().getName() + ";");
-        
-        code.append(new GETSTATIC(out));
-        code.append(new NEW(constantPool.addClass(mockMethod.getReturned().getClass().getName())));
-        code.append(InstructionConstants.DUP);*/
-        // factory.createConstant(mockMethod.getReturned());
-        // ToDo: Push mocked returned object onto the stack!
-        /* throw new FailedToMockException("Sorry mocking returned objects is not supported yet",
-                                        new UnsupportedOperationException("Unsupported Type" + returnType.toString()));
-         */
+        pushObjectOntoStack(factory, code, mockMethod);
       }
       code.append(new ACONST_NULL());
     }
+  }
+
+  private static void pushObjectOntoStack(InstructionFactory factory, InstructionList code, MockMethod<?> mockMethod) {
+    Class returnedClass = mockMethod.getReturned().getClass();
+    try {
+      // ToDo: Add support for returned Objects with parameters.
+      Constructor constructor = returnedClass.getConstructor();
+    } catch (NoSuchMethodException e) {
+      throw new FailedToMockException(
+          "Sorry only returned object with null constructors are currently supported. "
+              + "Unsupported returned object type: " + returnedClass.getName(),
+          e
+      );
+    }
+    code.append(factory.createNew(returnedClass.getName()));
+    code.append(InstructionConst.DUP);
+    code.append(factory.createInvoke(returnedClass.getName(), "<init>", Type.VOID, Type.NO_ARGS, Const.INVOKESPECIAL));
+    code.append(InstructionConst.NOP);
+    code.append(InstructionFactory.createReturn(Type.OBJECT));
   }
 
   private static boolean isSameType(Class<?> mockReturnedClass, Class<?> expectedReturnedType) {

@@ -2,6 +2,7 @@ package net.wrightnz.simple.testing;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
 
@@ -60,8 +61,7 @@ class SimpleMockerTest {
     assertEquals(0.0D, example.getDouble("1"));
     assertEquals(null, example.getObject());
   }
-
-
+  
   @Test
   void testMockClassWithMockMethods() {
     String expectedStr = "Fish";
@@ -88,7 +88,7 @@ class SimpleMockerTest {
   }
 
   @Test
-  void testMockClassWithContructorsMethods() {
+  void testMockClassWithConstructorsMethods() {
     int expected = 10;
     // Mock methods
     MockMethod<Integer> getStartX = new MockMethod<>(expected, "getStartX");
@@ -102,16 +102,35 @@ class SimpleMockerTest {
   }
 
   @Test
-  void testMockObjectReturned() {
-    Point expected = new Point(2, 4);
+  void testMockNonRtObjectReturned() {
+    ExampleClass expected = new ExampleClass();
     // Mock methods
-    MockMethod<Point> addStartX = new MockMethod<>(expected, "addStartX", int.class);
+    MockMethod<ExampleClass> getExample = new MockMethod<>(expected, "getExample", int.class);
     // Mock the Class
-    ExampleWithConstructorsClass example = SimpleMocker.mock(ExampleWithConstructorsClass.class, addStartX);
+    ExampleWithConstructorsClass example = SimpleMocker.mock(ExampleWithConstructorsClass.class, getExample);
     // Call the mocked method on the mocked interface.
-    Point result = example.addStartX(10);
+    ExampleClass result = example.getExample(10);
     // Check the expected mock result was also returned.
-    assertEquals(expected, result);
+    assertEquals(expected.getBoolean(), result.getBoolean());
+  }
+
+  @Test
+  void testMockNonNullConstructorReturn() {
+    ExampleWithNoNullConstructorClass expected = new ExampleWithNoNullConstructorClass("", "");
+    // Mock methods
+    MockMethod<ExampleWithNoNullConstructorClass> getExample2 = new MockMethod<>(expected, "getExample2");
+    // Mock the Class
+    try {
+      ExampleWithConstructorsClass example = SimpleMocker.mock(ExampleWithConstructorsClass.class, getExample2);
+      // Call the mocked method on the mocked interface.
+      ExampleWithNoNullConstructorClass result = example.getExample2();
+      fail("Exception sound have been thrown");
+    } catch (Exception e) {
+      assertEquals(
+          "Sorry only returned object with null constructors are currently supported. Unsupported returned object type: net.wrightnz.simple.testing.ExampleWithNoNullConstructorClass",
+          e.getMessage()
+      );
+    }
   }
   
 }

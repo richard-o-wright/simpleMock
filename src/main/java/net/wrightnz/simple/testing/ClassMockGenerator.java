@@ -99,7 +99,6 @@ public class ClassMockGenerator {
   }
 
   private static org.apache.bcel.classfile.Method generateMethod(ConstantPoolGen cpg, String className, Method method, MockMethod<?> mockMethod) {
-    int flags = ACC_PUBLIC;
     List<String> paramNames = new ArrayList<>();
     List<Type> paramTypes = new ArrayList<>();
     for (Parameter param : method.getParameters()) {
@@ -114,7 +113,7 @@ public class ClassMockGenerator {
     InstructionList code = generateCode(cpg, className, argTypes, returnType, mockMethod);
 
     MethodGen methodGen = new MethodGen(
-        flags,
+        ACC_PUBLIC,
         returnType,
         argTypes,
         argNames,

@@ -20,6 +20,14 @@ public class ExampleWithConstructorsClass {
     this.endPoint = endPoint;
   }
 
+  public ExampleClass getExample(int i) {
+    return new ExampleClass();
+  }
+
+  public ExampleWithNoNullConstructorClass getExample2() {
+    return new ExampleWithNoNullConstructorClass("", "");
+  }
+
   public Point zeroPoint() {
     startingPoint.setLocation(0, 0);
     return startingPoint;
