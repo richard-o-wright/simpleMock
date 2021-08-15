@@ -3,10 +3,12 @@ package net.wrightnz.simple.testing;
 import java.lang.reflect.Method;
 import java.util.Map;
 import org.apache.bcel.generic.ACONST_NULL;
+import org.apache.bcel.generic.ASTORE;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.InstructionFactory;
 import org.apache.bcel.generic.InstructionList;
-import org.apache.bcel.generic.NEW;
+import org.apache.bcel.generic.LocalVariableGen;
+import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.PUSH;
 import org.apache.bcel.generic.Type;
 
@@ -52,7 +54,7 @@ public final class MockMethodUtils {
     return true;
   }
   
-  public static void pushType(ConstantPoolGen constantPool, InstructionFactory factory, InstructionList code, Type returnType, MockMethod<?> mockMethod) {
+  public static void pushType(ConstantPoolGen constantPool, InstructionFactory factory, InstructionList code, Type returnType, MethodGen method, MockMethod<?> mockMethod) {
     Object value = MockConsts.TYPE_2_DEFAULT_VALUE.get(returnType);
     if (returnType.equals(Type.BOOLEAN)) {
       if (mockMethod != null && mockMethod.getReturned() != null) {
@@ -107,11 +109,23 @@ public final class MockMethodUtils {
       }
     } else {
       if (mockMethod != null) {
-        // code.append(new NEW(constantPool.addClass(mockMethod.getReturned().getClass().getName())));
+
+        final LocalVariableGen exc = method.addLocalVariable("foo", returnType, null, null);
+        final int slot = exc.getIndex();
+        code.append(new ASTORE(slot));
+
+        // mockMethod.getReturned().getClass()
+        /*final int out = constantPool.addFieldref("java.lang.System", "out", 
+                                         "L" + mockMethod.getReturned().getClass().getName() + ";");
+        
+        code.append(new GETSTATIC(out));
+        code.append(new NEW(constantPool.addClass(mockMethod.getReturned().getClass().getName())));
+        code.append(InstructionConstants.DUP);*/
         // factory.createConstant(mockMethod.getReturned());
         // ToDo: Push mocked returned object onto the stack!
-        throw new FailedToMockException("Sorry mocking returned objects is not supported yet",
+        /* throw new FailedToMockException("Sorry mocking returned objects is not supported yet",
                                         new UnsupportedOperationException("Unsupported Type" + returnType.toString()));
+         */
       }
       code.append(new ACONST_NULL());
     }

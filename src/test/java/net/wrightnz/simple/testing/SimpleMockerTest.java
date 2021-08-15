@@ -101,7 +101,7 @@ class SimpleMockerTest {
     assertEquals(expected, example.getStartX());
   }
 
-  // @Test
+  @Test
   void testMockObjectReturned() {
     Point expected = new Point(2, 4);
     // Mock methods
