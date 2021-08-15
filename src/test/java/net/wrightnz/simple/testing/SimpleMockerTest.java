@@ -61,7 +61,7 @@ class SimpleMockerTest {
     assertEquals(0.0D, example.getDouble("1"));
     assertEquals(null, example.getObject());
   }
-  
+
   @Test
   void testMockClassWithMockMethods() {
     String expectedStr = "Fish";
