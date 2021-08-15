@@ -8,24 +8,23 @@ import java.util.Map;
 
 public final class SimpleMocker {
 
-    private SimpleMocker(){
-    }
+  private SimpleMocker() {
+  }
 
-    public static <T> T mock(final Class<T> c) throws FailedToMockException {
-        return mock(c, new MockMethod<?>[0]);
-    }
+  public static <T> T mock(final Class<T> c) throws FailedToMockException {
+    return mock(c, new MockMethod<?>[0]);
+  }
 
-    public static <T> T mock(final Class<T> c, final Map<String, Object> responses) {
-        MockMethod<?>[] methods = new MockMethod[responses.size()];
-        int i = 0;
-        for (Map.Entry<String, Object> entry : responses.entrySet()) {
-            MockMethod<Object> method = new MockMethod<>(entry.getKey(), entry.getValue());
-            methods[i] = method;
-            i++;
-        }
-
-        return mock(c, methods);
+  public static <T> T mock(final Class<T> c, final Map<String, Object> responses) {
+    MockMethod<?>[] methods = new MockMethod[responses.size()];
+    int i = 0;
+    for (Map.Entry<String, Object> entry : responses.entrySet()) {
+      MockMethod<Object> method = new MockMethod<>(entry.getValue(), entry.getKey());
+      methods[i] = method;
+      i++;
     }
+    return mock(c, methods);
+  }
 
     public static <T> T mock(final Class<T> c, MockMethod<?>... methods) throws FailedToMockException {
         if (methods == null) {

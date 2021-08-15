@@ -9,7 +9,6 @@ import static org.apache.bcel.Const.ACC_PUBLIC;
 import static org.apache.bcel.Const.ACC_SUPER;
 
 import org.apache.bcel.Const;
-import org.apache.bcel.generic.ACONST_NULL;
 import org.apache.bcel.generic.ALOAD;
 import org.apache.bcel.generic.ASTORE;
 import org.apache.bcel.generic.CHECKCAST;
@@ -29,7 +28,6 @@ import org.apache.bcel.generic.LLOAD;
 import org.apache.bcel.generic.LSTORE;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.NEW;
-import org.apache.bcel.generic.PUSH;
 import org.apache.bcel.generic.Type;
 
 import java.lang.reflect.Constructor;
@@ -84,11 +82,10 @@ public class ClassMockGenerator {
   }
 
   private static org.apache.bcel.classfile.Method generateNullConstructor(ConstantPoolGen cpg, String className, String superClass, Parameter[] parameters) {
-    Type returnType = Type.VOID;
     InstructionList code = generateNullConstructorCode(cpg, superClass, parameters);
     MethodGen methodGen = new MethodGen(
         ACC_PUBLIC,
-        returnType,
+        Type.VOID,
         new Type[0],
         new String[0],
         MockConsts.CONSTRUCTOR_METHOD_NAME,
@@ -143,107 +140,24 @@ public class ClassMockGenerator {
     InstructionFactory factory = new InstructionFactory(constantPool);
     code.append(InstructionFactory.createLoad(Type.OBJECT, 0));
     for (Type argType : argTypes) {
-      Object value = MockConsts.TYPE_2_DEFAULT_VALUE.get(argType);
-      if (argType.equals(Type.INT)) {
-        code.append(new PUSH(constantPool, (int) value));
-      } else if (argType.equals(Type.LONG)) {
-        code.append(new PUSH(constantPool, (long) value));
-      } else if (argType.equals(Type.FLOAT)) {
-        code.append(new PUSH(constantPool, (float) value));
-      } else if (argType.equals(Type.DOUBLE)) {
-        code.append(new PUSH(constantPool, (double) value));
-      } else if (argType.equals(Type.SHORT)) {
-        code.append(new PUSH(constantPool, (short) value));
-      } else if (argType.equals(Type.BOOLEAN)) {
-        code.append(new PUSH(constantPool, (boolean) value));
-      } else if (argType.equals(Type.STRING)) {
-        code.append(new PUSH(constantPool, (String) value));
-      }
+      MockMethodUtils.pushType(constantPool, factory, code, argType, null);
     }
     code.append(factory.createInvoke(superClass, MockConsts.CONSTRUCTOR_METHOD_NAME, Type.VOID, argTypes, Const.INVOKESPECIAL));
     code.append(InstructionFactory.createReturn(Type.VOID));
     return code;
   }
 
-
   private static InstructionList generateCode(ConstantPoolGen constantPool, String className, Type[] argTypes, Type returnType, MockMethod mockMethod) {
     InstructionList code = new InstructionList();
-    if (returnType.equals(Type.BOOLEAN)) {
-      if (mockMethod != null && mockMethod.getReturned() != null) {
-        code.append(new PUSH(constantPool, Boolean.valueOf(mockMethod.getReturned().toString())));
-      } else {
-        code.append(new PUSH(constantPool, false));
-      }
-    } else if (returnType.equals(Type.BYTE)) {
-      if (mockMethod != null && mockMethod.getReturned() != null) {
-        code.append(new PUSH(constantPool, Byte.valueOf(mockMethod.getReturned().toString())));
-      } else {
-        code.append(new PUSH(constantPool, 0));
-      }
-    } else if (returnType.equals(Type.CHAR)) {
-      // For Debugging: System.out.printf(">>>>>>>>>> mockMethod: %s %n", mockMethod);
-      if (mockMethod != null && mockMethod.getReturned() != null) {
-        // For Debugging: System.out.printf(">>>>>>>>>> %c %n", ((Character) mockMethod.getReturned()).charValue());
-        code.append(new PUSH(constantPool, ((Character) mockMethod.getReturned()).charValue()));
-      } else {
-        code.append(new PUSH(constantPool, Character.MIN_VALUE));
-      }
-    } else if (returnType.equals(Type.INT)) {
-      if (mockMethod != null && mockMethod.getReturned() != null) {
-        code.append(new PUSH(constantPool, Integer.valueOf(mockMethod.getReturned().toString())));
-      } else {
-        code.append(new PUSH(constantPool, 0));
-      }
-    } else if (returnType.equals(Type.LONG)) {
-      if (mockMethod != null && mockMethod.getReturned() != null) {
-        code.append(new PUSH(constantPool, Long.valueOf(mockMethod.getReturned().toString())));
-      } else {
-        code.append(new PUSH(constantPool, 0L));
-      }
-    } else if (returnType.equals(Type.FLOAT)) {
-      if (mockMethod != null && mockMethod.getReturned() != null) {
-        code.append(new PUSH(constantPool, Float.valueOf(mockMethod.getReturned().toString())));
-      } else {
-        code.append(new PUSH(constantPool, 0.0F));
-      }
-    } else if (returnType.equals(Type.DOUBLE)) {
-      if (mockMethod != null && mockMethod.getReturned() != null) {
-        code.append(new PUSH(constantPool, Double.valueOf(mockMethod.getReturned().toString())));
-      } else {
-        code.append(new PUSH(constantPool, 0.0D));
-      }
-    } else if (returnType.equals(Type.STRING)) {
-      if (mockMethod != null && mockMethod.getReturned() != null) {
-        code.append(new PUSH(constantPool, mockMethod.getReturned().toString()));
-      } else {
-        code.append(new PUSH(constantPool, "-"));
-      }
-    } else if (returnType.equals(Type.OBJECT)) {
-      if (mockMethod != null) {
-        throw new FailedToMockException("Sorry mocking returned Objects is not supported yet",
-                                        new UnsupportedOperationException("Unsupported Type"));
-      }
-      code.append(new NEW(constantPool.addClass(returnType.toString())));
-      code.append(new ACONST_NULL());
-    } else {
-      if (mockMethod != null) {
-        throw new FailedToMockException("Sorry mocking returned objects is not supported yet",
-                                        new UnsupportedOperationException("Unsupported Type" + returnType.toString()));
-      }
-      code.append(new NEW(constantPool.addClass(returnType.toString())));
-      code.append(new ACONST_NULL());
-    }
+    InstructionFactory factory = new InstructionFactory(constantPool);
+    MockMethodUtils.pushType(constantPool, factory, code, returnType, mockMethod);
     code.append(InstructionFactory.createReturn(returnType));
     return code;
   }
 
-
-
-
-
   /**
    * Converts a primitive into its corresponding object wrapper reference.
-   * This method assumes the primitve is already pushed to the top of the operand
+   * This method assumes the primitive is already pushed to the top of the operand
    * stack. The stack is modified so that the primitive value is replaced
    * by a reference to its corresponding wrapper object that has been
    * initialized to contain the same value.

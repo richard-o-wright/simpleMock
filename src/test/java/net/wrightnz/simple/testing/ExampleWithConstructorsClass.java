@@ -7,19 +7,39 @@ import java.awt.Point;
  */
 public class ExampleWithConstructorsClass {
 
-    private final Point startingPoint;
+  private Point startingPoint;
+  private final Point endPoint;
 
-    public ExampleWithConstructorsClass(int x, long y, String str, float fl, boolean isTest) {
-        this.startingPoint = new Point(x, (int) y);
-    }
+  public ExampleWithConstructorsClass(int x, long y, String str, float fl, boolean isTest, Point point) {
+    this.startingPoint = new Point(x, (int) y);
+    this.endPoint = point;
+  }
 
-    public ExampleWithConstructorsClass(Point startingPoint) {
-        this.startingPoint = startingPoint;
-    }
+  public ExampleWithConstructorsClass(Point startingPoint, Point endPoint) {
+    this.startingPoint = startingPoint;
+    this.endPoint = endPoint;
+  }
 
-    public Point zeroPoint() {
-        startingPoint.setLocation(0, 0);
-        return startingPoint;
-    }
+  public Point zeroPoint() {
+    startingPoint.setLocation(0, 0);
+    return startingPoint;
+  }
+
+  public Point getEndPoint() {
+    return endPoint;
+  }
+
+  public Point addStartX(int amount) {
+    startingPoint = new Point(startingPoint.x + amount, startingPoint.y);
+    return startingPoint;
+  }
+
+  public int getStartX() {
+    return endPoint.x;
+  }
+
+  public int getStartY() {
+    return endPoint.y;
+  }
 
 }
