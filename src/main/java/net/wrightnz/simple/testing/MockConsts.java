@@ -3,6 +3,7 @@ package net.wrightnz.simple.testing;
 import org.apache.bcel.generic.Type;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class MockConsts {
@@ -25,6 +26,8 @@ public final class MockConsts {
     TYPE_2_DEFAULT_VALUE.put(Type.STRINGBUFFER, null);
     TYPE_2_DEFAULT_VALUE.put(Type.THROWABLE, null);
   }
+
+  public static final List<String> DO_NOT_MOCK_METHODS = List.of("getClass", "wait", "notify", "notifyAll");
 
   private MockConsts() {}
 

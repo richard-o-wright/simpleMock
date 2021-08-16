@@ -26,23 +26,23 @@ public final class SimpleMocker {
     return mock(c, methods);
   }
 
-    public static <T> T mock(final Class<T> c, MockMethod<?>... methods) throws FailedToMockException {
-        if (methods == null) {
-            throw new FailedToMockException("MockMethod cannot be null", null);
-        }
-
-        if (c.isInterface()) {
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            Class<?>[] interfaces = new Class[]{c};
-            InvocationHandler invocationHandler = new MockInvocationHandler(methods);
-            return (T) newProxyInstance(cl, interfaces, invocationHandler);
-        }
-        try {
-            return ClassMockGenerator.createSubClass(c, methods);
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException e) {
-            e.printStackTrace();
-            throw new FailedToMockException("Failed to create mock instance of: " + c.getName(), e);
-        }
+  public static <T> T mock(final Class<T> c, MockMethod<?>... methods) throws FailedToMockException {
+    if (methods == null) {
+      throw new FailedToMockException("MockMethod cannot be null", null);
     }
+
+    if (c.isInterface()) {
+      ClassLoader cl = Thread.currentThread().getContextClassLoader();
+      Class<?>[] interfaces = new Class[]{c};
+      InvocationHandler invocationHandler = new MockInvocationHandler(methods);
+      return (T) newProxyInstance(cl, interfaces, invocationHandler);
+    }
+    try {
+      MockClassGenerator<T> mockGenerator = new MockClassGenerator<>();
+      return mockGenerator.createSubClass(c, methods);
+    } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException e) {
+      throw new FailedToMockException("Failed to create mock instance of: " + c.getName(), e);
+    }
+  }
 
 }

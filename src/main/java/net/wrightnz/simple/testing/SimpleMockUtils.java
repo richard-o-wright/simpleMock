@@ -10,10 +10,9 @@ import org.apache.bcel.generic.PUSH;
 import org.apache.bcel.generic.Type;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.Map;
 
-public final class MockMethodUtils {
+public final class SimpleMockUtils {
 
   public static final Map<String, String> WRAPPER_3_PRIMITIVE = Map.of(
       "java.lang.Integer", "int",
@@ -25,50 +24,24 @@ public final class MockMethodUtils {
       "java.lang.Boolean", "boolean"
   );
 
-  private MockMethodUtils() {
+  private SimpleMockUtils() {
   }
 
-  public static MockMethod<?> getMockMethod(Method method, MockMethod<?>... mocks) {
-    for (MockMethod<?> mock : mocks) {
-      Class<?> mockReturnedClass = mock.getReturned().getClass();
-      Class<?> expectedReturnedType = method.getReturnType();
-      if (mock.getName().equals(method.getName())
-              && isSameType(mockReturnedClass, expectedReturnedType)
-              && hasSameParameters(method, mock)) {
-        return mock;
-      }
-    }
-    return null;
-  }
-
-  public static boolean hasSameParameters(Method method, MockMethod<?> mock) {
-    Class<?>[] methodParams = method.getParameterTypes();
-    Class<?>[] mockTypes = mock.getParameterTypes();
-    if (method.getParameterCount() != mockTypes.length) {
-      return false;
-    }
-    for (int i = 0; i < methodParams.length; i++) {
-      if (methodParams[i] != mockTypes[i]) {
-        return false;
-      }
-    }
-    return true;
-  }
-  
-  public static void pushType(ConstantPoolGen constantPool, InstructionFactory factory, InstructionList code, Type returnType, MockMethod<?> mockMethod) {
+  public static void pushType(ConstantPoolGen constantPool, InstructionFactory factory, InstructionList code, Type returnType, MockMethod<?> mockMethod)
+      throws NoSuchMethodException {
     // For Debugging: System.out.printf("Called: pushType(ConstantPoolGen, InstructionFactory, InstructionList, %s, %s)%n", returnType, mockMethod);
     Object value = MockConsts.TYPE_2_DEFAULT_VALUE.get(returnType);
     if (returnType.equals(Type.BOOLEAN)) {
       if (mockMethod != null && mockMethod.getReturned() != null) {
         code.append(new PUSH(constantPool, Boolean.valueOf(mockMethod.getReturned().toString())));
       } else {
-        code.append(new PUSH(constantPool, (boolean)value));
+        code.append(new PUSH(constantPool, (boolean) value));
       }
     } else if (returnType.equals(Type.BYTE)) {
       if (mockMethod != null && mockMethod.getReturned() != null) {
         code.append(new PUSH(constantPool, Byte.valueOf(mockMethod.getReturned().toString())));
       } else {
-        code.append(new PUSH(constantPool, (byte)value));
+        code.append(new PUSH(constantPool, (byte) value));
       }
     } else if (returnType.equals(Type.CHAR)) {
       if (mockMethod != null && mockMethod.getReturned() != null) {
@@ -81,60 +54,71 @@ public final class MockMethodUtils {
       if (mockMethod != null && mockMethod.getReturned() != null) {
         code.append(new PUSH(constantPool, Integer.valueOf(mockMethod.getReturned().toString())));
       } else {
-        code.append(new PUSH(constantPool, (int)value));
+        code.append(new PUSH(constantPool, (int) value));
       }
     } else if (returnType.equals(Type.LONG)) {
       if (mockMethod != null && mockMethod.getReturned() != null) {
         code.append(new PUSH(constantPool, Long.valueOf(mockMethod.getReturned().toString())));
       } else {
-        code.append(new PUSH(constantPool, (long)value));
+        code.append(new PUSH(constantPool, (long) value));
       }
     } else if (returnType.equals(Type.FLOAT)) {
       if (mockMethod != null && mockMethod.getReturned() != null) {
         code.append(new PUSH(constantPool, Float.valueOf(mockMethod.getReturned().toString())));
       } else {
-        code.append(new PUSH(constantPool, (float)value));
+        code.append(new PUSH(constantPool, (float) value));
       }
     } else if (returnType.equals(Type.DOUBLE)) {
       if (mockMethod != null && mockMethod.getReturned() != null) {
         code.append(new PUSH(constantPool, Double.valueOf(mockMethod.getReturned().toString())));
       } else {
-        code.append(new PUSH(constantPool, (double)value));
+        code.append(new PUSH(constantPool, (double) value));
       }
     } else if (returnType.equals(Type.STRING)) {
       if (mockMethod != null && mockMethod.getReturned() != null) {
         code.append(new PUSH(constantPool, mockMethod.getReturned().toString()));
       } else {
-        code.append(new PUSH(constantPool, (String)value));
+        code.append(new PUSH(constantPool, (String) value));
       }
     } else {
       if (mockMethod != null) {
-        pushObjectOntoStack(factory, code, mockMethod);
+        pushObjectOntoStack(constantPool, factory, code, mockMethod);
+      } else {
+        code.append(new ACONST_NULL());
       }
-      code.append(new ACONST_NULL());
     }
   }
 
-  private static void pushObjectOntoStack(InstructionFactory factory, InstructionList code, MockMethod<?> mockMethod) {
-    Class returnedClass = mockMethod.getReturned().getClass();
-    try {
-      // ToDo: Add support for returned Objects with parameters.
-      Constructor constructor = returnedClass.getConstructor();
-    } catch (NoSuchMethodException e) {
-      throw new FailedToMockException(
-          "Sorry only returned object with null constructors are currently supported. "
-              + "Unsupported returned object type: " + returnedClass.getName(),
-          e
-      );
+  public static boolean hasNullConstructor(Class<?> clazz) {
+    Constructor[] constructors = clazz.getConstructors();
+    for (Constructor constructor : constructors) {
+      if (constructor.getParameterCount() == 0) {
+        return true;
+      }
     }
+    return false;
+  }
+
+  private static void pushObjectOntoStack(ConstantPoolGen constantPool, InstructionFactory factory, InstructionList code, MockMethod<?> mockMethod)
+      throws NoSuchMethodException {
+    Class returnedClass = mockMethod.getReturned().getClass();
+    Constructor constructor;
+    if (SimpleMockUtils.hasNullConstructor(returnedClass)) {
+      constructor = returnedClass.getConstructor();
+    } else {
+      constructor = returnedClass.getConstructors()[0];
+    }
+    Parameters parameters = new Parameters(constructor.getParameters());
     code.append(factory.createNew(returnedClass.getName()));
     code.append(InstructionConst.DUP);
-    code.append(factory.createInvoke(returnedClass.getName(), "<init>", Type.VOID, Type.NO_ARGS, Const.INVOKESPECIAL));
+    for (Type type : parameters.getTypes()) {
+      pushType(constantPool, factory, code, type, null);
+    }
+    code.append(factory.createInvoke(returnedClass.getName(), "<init>", Type.VOID, parameters.getTypes(), Const.INVOKESPECIAL));
     code.append(InstructionConst.NOP);
-    code.append(InstructionFactory.createReturn(Type.OBJECT));
   }
 
-  private static boolean isSameType(Class<?> mockReturnedClass, Class<?> expectedReturnedType) {
+  public static boolean isSameType(Class<?> mockReturnedClass, Class<?> expectedReturnedType) {
     // For Debugging: System.out.printf(">>> mockReturnedClass: %s, expectedReturnType: %s %n", mockReturnedClass, expectedReturnedType);
     if (expectedReturnedType.isPrimitive()) {
       String primitiveType = WRAPPER_3_PRIMITIVE.get(mockReturnedClass.getCanonicalName());

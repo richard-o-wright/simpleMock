@@ -5,12 +5,14 @@ import java.util.Objects;
 /**
  * @author Richard Wright
  */
-public class ExampleWithNoNullConstructorClass {
+public class ExampleWithoutNullConstructor {
 
     private String str1;
     private String str2;
 
-    public ExampleWithNoNullConstructorClass(String str1, String str2){
+    public ExampleWithoutNullConstructor(String str1, String str2){
+        this.str1 = str1;
+        this.str2 = str2;
     }
 
     public String getStr1() {
@@ -43,7 +45,7 @@ public class ExampleWithNoNullConstructorClass {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        final ExampleWithNoNullConstructorClass that = (ExampleWithNoNullConstructorClass) o;
+        final ExampleWithoutNullConstructor that = (ExampleWithoutNullConstructor) o;
 
         if (!Objects.equals(str1, that.str1)) return false;
         return Objects.equals(str2, that.str2);

@@ -24,8 +24,8 @@ public class ExampleWithConstructorsClass {
     return new ExampleClass();
   }
 
-  public ExampleWithNoNullConstructorClass getExample2() {
-    return new ExampleWithNoNullConstructorClass("", "");
+  public ExampleWithoutNullConstructor getExample2() {
+    return new ExampleWithoutNullConstructor("", "");
   }
 
   public Point zeroPoint() {
