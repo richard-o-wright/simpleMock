@@ -20,7 +20,7 @@ public final class MockConsts {
     TYPE_2_DEFAULT_VALUE.put(Type.BYTE, Byte.MIN_VALUE);
     TYPE_2_DEFAULT_VALUE.put(Type.LONG, 0L);
     TYPE_2_DEFAULT_VALUE.put(Type.BOOLEAN, Boolean.FALSE);
-    TYPE_2_DEFAULT_VALUE.put(Type.OBJECT, new Object());
+    TYPE_2_DEFAULT_VALUE.put(Type.OBJECT, null);
     TYPE_2_DEFAULT_VALUE.put(Type.STRING, "");
     TYPE_2_DEFAULT_VALUE.put(Type.SHORT, 0);
     TYPE_2_DEFAULT_VALUE.put(Type.STRINGBUFFER, null);

@@ -46,6 +46,14 @@ public class ExampleClass {
         return 0.0F;
     }
 
+    public Float getFloatObj() {
+        return Float.MIN_VALUE;
+    }
+
+    public Boolean getBooleanObj() {
+        return Boolean.TRUE;
+    }
+
     public double getDouble(String str) {
         return 0.0;
     }

@@ -77,7 +77,7 @@ public final class MockMethodFactory {
   private static InstructionList generateCode(ConstantPoolGen constantPool, Type returnType, MockMethod mockMethod) throws NoSuchMethodException {
     InstructionFactory factory = new InstructionFactory(constantPool);
     InstructionList code = new InstructionList();
-    SimpleMockUtils.pushType(constantPool, factory, code, returnType, mockMethod);
+    SimpleMockUtils.pushMockReturnValue(constantPool, factory, code, returnType, mockMethod);
     code.append(InstructionFactory.createReturn(returnType));
     return code;
   }

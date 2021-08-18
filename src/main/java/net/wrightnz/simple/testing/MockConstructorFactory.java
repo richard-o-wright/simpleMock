@@ -41,7 +41,7 @@ public final class MockConstructorFactory {
     code.append(InstructionFactory.createLoad(Type.OBJECT, 0));
     final Parameters params = new Parameters(parameters);
     for (Type argType : params.getTypes()) {
-      SimpleMockUtils.pushType(constantPool, factory, code, argType, null);
+      SimpleMockUtils.pushMockReturnValue(constantPool, factory, code, argType, null);
     }
     code.append(factory.createInvoke(superClass, MockConsts.CONSTRUCTOR_METHOD_NAME, Type.VOID, params.getTypes(), Const.INVOKESPECIAL));
     code.append(InstructionFactory.createReturn(Type.VOID));

@@ -21,7 +21,8 @@ import java.lang.reflect.Method;
 public class MockClassGenerator<T> {
 
   public T createSubClass(final Class<T> clazz, final MockMethod<?>... methods)
-      throws NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+      throws NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+      InvocationTargetException,
       ClassNotFoundException {
 
     String subclassName = clazz.getName() + "Sub";
