@@ -45,11 +45,15 @@ public final class MockMethodFactory {
    */
   public static MockMethod<?> findMockMethod(Method method, MockMethod<?>... mocks) {
     for (MockMethod<?> mock : mocks) {
-      if (mock.getName().equals(method.getName()) && hasSameParameters(method, mock)) {
+      if (isSameMethod(method, mock)) {
         return mock;
       }
     }
     return null;
+  }
+
+  public static boolean isSameMethod(Method method, MockMethod<?> mock) {
+    return mock.getName().equals(method.getName()) && hasSameParameters(method, mock);
   }
 
   private static boolean hasSameParameters(Method method, MockMethod<?> mock) {
