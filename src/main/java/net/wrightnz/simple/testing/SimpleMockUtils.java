@@ -60,8 +60,7 @@ public final class SimpleMockUtils {
 
   public static void pushMockReturnValue(ConstantPoolGen constantPool, InstructionFactory factory, InstructionList code, Type returnType, MockMethod<?> mockMethod)
       throws NoSuchMethodException {
-    // For Debugging:
-    System.out.printf("Called: pushMockReturnValue(ConstantPoolGen, InstructionFactory, InstructionList, %s, %s)%n", returnType, mockMethod);
+    // For Debugging: System.out.printf("Called: pushMockReturnValue(ConstantPoolGen, InstructionFactory, InstructionList, %s, %s)%n", returnType, mockMethod);
     if (mockMethod != null) {
       pushValue(constantPool, factory, code, returnType, mockMethod.getReturned());
     } else {
@@ -109,7 +108,7 @@ public final class SimpleMockUtils {
    */
   private static void handleOtherObjects(ConstantPoolGen constantPool, InstructionFactory factory, InstructionList code, Object object)
       throws NoSuchMethodException {
-    System.out.printf(">>>>>>>>>> %s %n", object.getClass());
+    // System.out.printf(">>>>>>>>>> %s %n", object.getClass());
     Constructor<?> constructor;
     if (SimpleMockUtils.hasNullConstructor(object.getClass())) {
       constructor = object.getClass().getConstructor();

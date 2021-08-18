@@ -6,4 +6,6 @@ public interface ExampleInterface {
 
   String doSomething(int x, String y);
 
+  Returned getReturned();
+
 }

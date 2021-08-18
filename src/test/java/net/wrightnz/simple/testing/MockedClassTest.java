@@ -7,53 +7,16 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
  * @author Richard Wright
  */
-class SimpleMockerTest {
-
-  @Test
-  void testSimplestMock() {
-    ExampleInterface example = mock(ExampleInterface.class);
-    String result = example.doSomething();
-    assertNull(result);
-  }
-
-  @Test
-  void testMock() {
-    String expected = "Expected";
-    Map<String, Object> responses = new HashMap<>();
-    responses.put("doSomething", expected);
-    ExampleInterface example = mock(ExampleInterface.class, responses);
-    String result = example.doSomething();
-    assertEquals(expected, result);
-  }
-
-  @Test
-  void testMockMethods() {
-    String expected = "Fish";
-
-    Class<?>[] doSomethingTypes = {int.class, String.class};
-    // Mock a method
-    MockMethod<String> meth1 = new MockMethod<>(expected, "doSomething", doSomethingTypes);
-    // Mock an Interface
-    ExampleInterface example = mock(ExampleInterface.class, meth1);
-    // Call the mocked method on the mocked interface.
-    example.doSomething(1, "");
-    String result = example.doSomething(1, "test");
-    // Check the mock method was called n number of times.
-    assertEquals(2, meth1.getInvocationCount());
-    // Check the expected mock result was also returned.
-    assertEquals(expected, result);
-  }
+class MockedClassTest {
 
   @Test
   void testMockClass() {
-    // Mock an Class
+    // Mock a Class
     ExampleClass example = mock(ExampleClass.class);
     // Check the expected mock result was also returned.
     assertEquals(0, example.getInt(10));
@@ -134,23 +97,24 @@ class SimpleMockerTest {
 
   @Test
   void testMockNonNullConstructorReturn() {
-    MockMethod<String> getString = new MockMethod<>("-", "getString", String.class);
-    ExampleClass exampleClass = mock(ExampleClass.class, getString);
-    System.out.println(">>>>>>> " + exampleClass.getClass());
-    assertEquals("-", exampleClass.getString("test"));
+    MockMethod<String> getAnswer = new MockMethod<>("-", "getAnswer");
+    SimpleExampleClass.ReturnedClass returned = mock(SimpleExampleClass.ReturnedClass.class, getAnswer);
+    System.out.println(">>>>>>> " + returned.getClass());
+    assertEquals("-", returned.getAnswer());
 
+    // ToDo: Make this fancy recursive stuff work maybe? Or perhaps it's a bad idea and shouldn't be supported?
+    // I mean having a mock return a mock implies a lot of assumptions are being made
+    /*
     // Mock methods
-    MockMethod<ExampleClass> getExample = new MockMethod<>(exampleClass, "getExample", int.class);
+    MockMethod<SimpleExampleClass.ReturnedClass> getReturned = new MockMethod<>(returned, "getReturned");
     // Mock the Class
-    ExampleWithConstructorsClass example = mock(ExampleWithConstructorsClass.class, getExample);
+    SimpleExampleClass example = mock(SimpleExampleClass.class, getReturned);
     System.out.println(">>>>>>> " + example.getClass());
     // Call the mocked method on the mocked class.
-    ExampleClass actual = example.getExample(1);
-
+    SimpleExampleClass.ReturnedClass actual = example.getReturned();
     // Then
-    // ToDo: Make this fancy recursive stuff work maybe or
-    //  perhaps it's a bad idea and shouldn't be supported?
-    assertEquals(null, actual);
+    assertEquals("-", actual.getAnswer());
+     */
   }
 
 }
