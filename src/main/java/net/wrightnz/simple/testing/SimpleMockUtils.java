@@ -80,7 +80,7 @@ public final class SimpleMockUtils {
       } else {
         code.append(new PUSH(constantPool, (String) value));
       }
-    } else {
+    } else if (!returnType.equals(Type.VOID)) {
       if (mockMethod != null) {
         pushObjectOntoStack(constantPool, factory, code, mockMethod);
       } else {

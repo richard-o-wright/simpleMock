@@ -75,8 +75,9 @@ class SimpleMockerTest {
     MockMethod<Double> getDouble = new MockMethod<>(expectedDouble, "getDouble", String.class);
     MockMethod<Byte> getByte = new MockMethod<>(expectedByte, "getByte", String.class, String.class);
     MockMethod<Boolean> getBoolean = new MockMethod<>(Boolean.TRUE, "getBoolean");
+    MockMethod<Void> addCharToStr1 = new MockMethod<>(null, "addCharToStr1", char.class);
     // Mock an Class
-    ExampleClass actual = mock(ExampleClass.class, getInt, getString, getChar, getDouble, getByte, getBoolean);
+    ExampleClass actual = mock(ExampleClass.class, getInt, getString, getChar, getDouble, getByte, getBoolean, addCharToStr1);
     // Check the expected mock result was also returned.
     assertEquals(42, actual.getInt(10));
     assertEquals(expectedStr, actual.getString("1"));

@@ -45,12 +45,17 @@ public final class MockMethodFactory {
    */
   public static MockMethod<?> findMockMethod(Method method, MockMethod<?>... mocks) {
     for (MockMethod<?> mock : mocks) {
-      Class<?> mockReturnedClass = mock.getReturned().getClass();
-      Class<?> expectedReturnedType = method.getReturnType();
-      if (mock.getName().equals(method.getName())
-          && SimpleMockUtils.isSameType(mockReturnedClass, expectedReturnedType)
-          && hasSameParameters(method, mock)) {
-        return mock;
+      if (mock.getName().equals(method.getName()) && hasSameParameters(method, mock)) {
+        System.out.printf(">>>>>> %s %n", method.getReturnType());
+        if (mock.getReturned() == null
+            && (method.getReturnType() == Void.class || method.getReturnType() == void.class)) {
+          return mock;
+        }
+        Class<?> mockReturnedClass = mock.getReturned().getClass();
+        Class<?> expectedReturnedType = method.getReturnType();
+        if (SimpleMockUtils.isSameType(mockReturnedClass, expectedReturnedType)) {
+          return mock;
+        }
       }
     }
     return null;

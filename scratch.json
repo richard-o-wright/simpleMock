@@ -1,0 +1,202 @@
+{
+  "id": "0829a8f0-85e0-41c1-8c31-455c5eeab140",
+  "name": "R72623 PM2.5 Temp Humid Noise",
+  "device_id": "00137A100000CEB6",
+  "measures": [
+    {
+      "name": "Temperature",
+      "unit": "C"
+    },
+    {
+      "name": "Humidity",
+      "unit": "%"
+    },
+    {
+      "name": "PM2.5",
+      "unit": "ug/m3"
+    },
+    {
+      "name": "PM10",
+      "unit": "ug/m3"
+    },
+    {
+      "name": "Noise",
+      "unit": "db"
+    }
+  ],
+  "additionalInformation": "",
+  "deviceType": {
+    "name": "R72623 Netvox PM2.5/Temp/Humidity/Noise Sensor"
+  },
+  "batteryLevel": 92,
+  "latest_reading": {
+    "timestamp": 1629172012266,
+    "battery": 12.3,
+    "battery_unit": "V",
+    "temperature": 16.79,
+    "temperature_unit": "°C",
+    "humidity": 69.47,
+    "humidity_unit": "%",
+    "windspeed": "NA",
+    "windspeed_unit": "m/s"
+  },
+  "account": "anton.vasetenkov@qrious.co.nz",
+  "alerts": [
+    {
+      "id": "6e4ff591-bdbc-47a2-9f9f-b881a3736d4f",
+      "name": "test validity 2",
+      "status": "Disabled",
+      "type": "Inform only",
+      "measures": [
+        {
+          "name": "Temperature",
+          "unit": "C",
+          "min": 0,
+          "max": 0,
+          "triggerValue": "21.74"
+        },
+        {
+          "name": "Humidity",
+          "unit": "%",
+          "min": 0,
+          "max": 0,
+          "triggerValue": "62.80"
+        }
+      ],
+      "createdBy": "Vadim.Chernov@qrious.co.nz",
+      "createdDate": 1605474889847,
+      "updatedBy": "anton.vasetenkov@qrious.co.nz",
+      "validity": {
+        "validAllDay": false,
+        "validTimeFrom": "11:00:00",
+        "validTimeTo": "17:00:00",
+        "validWeekdays": [
+          "Mo",
+          "Fr"
+        ],
+        "validityRestrictionEnabled": true
+      }
+    },
+    {
+      "id": "e6471f11-db73-4a25-9eb3-8d43b44a0b0f",
+      "name": "test vadim",
+      "status": "Disabled",
+      "type": "Response required",
+      "measures": [
+        {
+          "name": "Temperature",
+          "unit": "C",
+          "min": 0,
+          "max": 0,
+          "triggerValue": "15.02"
+        },
+        {
+          "name": "Humidity",
+          "unit": "%",
+          "min": 0,
+          "max": 0,
+          "triggerValue": "70.66"
+        },
+        {
+          "name": "PM2.5",
+          "unit": "ug/m3",
+          "min": 0,
+          "max": 0,
+          "triggerValue": "1"
+        },
+        {
+          "name": "PM10",
+          "unit": "ug/m3",
+          "min": 0,
+          "max": 0,
+          "triggerValue": "2"
+        },
+        {
+          "name": "Noise",
+          "unit": "db",
+          "min": 30,
+          "max": 30,
+          "triggerValue": "54.10"
+        }
+      ],
+      "createdBy": "Vadim.Chernov@qrious.co.nz",
+      "createdDate": 1605674896390,
+      "validity": {
+        "validAllDay": false,
+        "validTimeFrom": "09:00:00",
+        "validTimeTo": "17:00:00",
+        "validWeekdays": [
+          "Mo",
+          "Tu",
+          "We",
+          "Th",
+          "Fr"
+        ],
+        "validityRestrictionEnabled": false
+      }
+    },
+    {
+      "id": "a1d18910-ed74-4ff7-a0a1-23f99a0ec7d7",
+      "name": "To Hot or poluted or noisy",
+      "status": "Enabled",
+      "type": "Inform only",
+      "measures": [
+        {
+          "name": "Temperature",
+          "unit": "C",
+          "min": 2,
+          "max": 30,
+          "triggerValue": "16.79"
+        },
+        {
+          "name": "Humidity",
+          "unit": "%",
+          "min": 1,
+          "max": 90,
+          "triggerValue": "69.47"
+        },
+        {
+          "name": "PM2.5",
+          "unit": "ug/m3",
+          "min": 1,
+          "max": 5,
+          "triggerValue": "2"
+        },
+        {
+          "name": "PM10",
+          "unit": "ug/m3",
+          "min": 2,
+          "max": 5,
+          "triggerValue": "4"
+        },
+        {
+          "name": "Noise",
+          "unit": "db",
+          "max": 30,
+          "triggerValue": "20"
+        }
+      ],
+      "createdBy": "richard.wright@spark.co.nz",
+      "createdDate": 1628830136414,
+      "updatedBy": "anton.vasetenkov@qrious.co.nz",
+      "validity": {
+        "validAllDay": false,
+        "validTimeFrom": "09:00:00",
+        "validTimeTo": "17:00:00",
+        "validWeekdays": [
+          "Mo",
+          "Tu",
+          "We",
+          "Th",
+          "Fr"
+        ],
+        "validityRestrictionEnabled": false
+      },
+      "delay": 1
+    }
+  ],
+  "group": {
+    "id": "de8c97a2-0eef-402c-aaea-4c7e77b25ba7",
+    "name": "vadims groups"
+  }
+}

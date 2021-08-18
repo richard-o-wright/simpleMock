@@ -30,6 +30,10 @@ public class ExampleClass {
         return 'a';
     }
 
+    public void addCharToStr1(char c) {
+        this.str1 = str1 + c;
+    }
+
     public int getInt(int i) {
         return Integer.MAX_VALUE;
     }
