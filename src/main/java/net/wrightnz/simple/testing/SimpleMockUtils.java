@@ -10,6 +10,7 @@ import org.apache.bcel.generic.PUSH;
 import org.apache.bcel.generic.Type;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 public final class SimpleMockUtils {
@@ -143,6 +144,24 @@ public final class SimpleMockUtils {
     } catch (NoSuchMethodException e) {
       return false;
     }
+  }
+
+  public static boolean isSameMethod(Method method, MockMethod<?> mock) {
+    return mock.getName().equals(method.getName()) && hasSameParameters(method, mock);
+  }
+
+  public static boolean hasSameParameters(Method method, MockMethod<?> mock) {
+    Class<?>[] methodParams = method.getParameterTypes();
+    Class<?>[] mockTypes = mock.getParameterTypes();
+    if (method.getParameterCount() != mockTypes.length) {
+      return false;
+    }
+    for (int i = 0; i < methodParams.length; i++) {
+      if (methodParams[i] != mockTypes[i]) {
+        return false;
+      }
+    }
+    return true;
   }
 
   public static boolean isSameType(Class<?> mockReturnedClass, Class<?> expectedReturnedType) {

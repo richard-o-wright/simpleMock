@@ -23,10 +23,10 @@ public class MockInvocationHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (methods != null) {
-            for (MockMethod<?> meth : methods) {
-                if (meth.getName().equals(method.getName())) {
-                    meth.incrementInvocationCount();
-                    return meth.getReturned();
+            for (MockMethod<?> mock : methods) {
+                if (SimpleMockUtils.isSameMethod(method, mock)) {
+                    mock.incrementInvocationCount();
+                    return mock.getReturned();
                 }
             }
         }
