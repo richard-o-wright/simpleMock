@@ -1,17 +1,34 @@
 ## Welcome
 
-Simple Mock is really that simple, just one worker class (with 3 static
-methods) and one PoJo.
+Simple Mock is really that simple. The interface is just on mock factory class 
+(with 3 static methods) and one PoJo.
 
-To get started using it please refer to the examples in the Unit test.
+I hope you might find it useful too!
 
+I've written simpleMock because I got frustrated with the behaviour I was getting with
+other mocking frameworks, mainly to do with Having multiple instance of the same class
+in the same set of tests, particularly when so instances are mocked and others not.
+I suspect that this behaviour is to do the use of some static look up tables in the
+frameworks' implementation? That spark some additional concerns about thread safely, 
+hence we have simpleMock.
+
+Because simpleMock doesn't store any references to the classes it has mocked its
+functionality is limited compared to other frameworks. However it does 
+have the important features to get the job done:-)
+
+simpleMock works best for mocking interfaces (Which it turns out is quite easy to do:-))
+Mocking concrete classes is supported but quite limited specifically:
+* Counting invocations of the method on a mocked concrete classes doesn't currently work.
+* When mocking a concrete classes method that returns an object it cannot mock the returned 
+  objects behaviour, what is returned is a blank instance of the object.
+* When mocking a concrete classes method that returns an object, the returned object cannot
+  also be a mock. I don't fully understand why this is and so if could be something that is
+  fixed in a future version.
+
+To get started using simpleMock please refer to the examples in the Unit test.
 ```
 {project-root}/src/test/java/net/wrightnz/testing/simple/SimpleMockerTest.java
 ```
-
-Created because I'm sick of complex heavy weight and unreliable 
-mocking libraries making my unit test hard to write and fragile.
-I hope you might it useful too!
 
 How to add to your project as Maven dependency:
 ```
@@ -22,4 +39,4 @@ How to add to your project as Maven dependency:
 </dependency>
 ```
 Thanks,
-Richard Wright (richard@wrightnz.net).
+Richard Wright (github@wrightnz.net).
