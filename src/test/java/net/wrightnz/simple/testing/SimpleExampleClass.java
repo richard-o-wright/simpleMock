@@ -26,10 +26,4 @@ public class SimpleExampleClass {
         return new ReturnedClass();
     }
 
-    public static class ReturnedClass {
-
-        public String getAnswer(){
-            return "answer";
-        }
-    }
 }

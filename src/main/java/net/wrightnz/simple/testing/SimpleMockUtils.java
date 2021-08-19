@@ -108,7 +108,6 @@ public final class SimpleMockUtils {
    */
   private static void handleOtherObjects(ConstantPoolGen constantPool, InstructionFactory factory, InstructionList code, Object object)
       throws NoSuchMethodException {
-    // System.out.printf(">>>>>>>>>> %s %n", object.getClass());
     Constructor<?> constructor;
     if (SimpleMockUtils.hasNullConstructor(object.getClass())) {
       constructor = object.getClass().getConstructor();

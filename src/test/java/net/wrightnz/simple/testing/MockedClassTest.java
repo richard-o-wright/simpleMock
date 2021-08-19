@@ -98,18 +98,20 @@ class MockedClassTest {
   @Test
   void testMockNonNullConstructorReturn() {
     MockMethod<String> getAnswer = new MockMethod<>("-", "getAnswer");
-    SimpleExampleClass.ReturnedClass returned = mock(SimpleExampleClass.ReturnedClass.class, getAnswer);
-    System.out.println(">>>>>>> " + returned.getClass());
+    MockMethod<String> toString = new MockMethod<>("ReturnedClassStub[]", "toString");
+    ReturnedClass returned = mock(ReturnedClass.class, getAnswer, toString);
+    System.out.printf(">>>>>>> %s, %s %n", returned.toString(), returned.getClass());
     assertEquals("-", returned.getAnswer());
 
     // ToDo: Make this fancy recursive stuff work maybe? Or perhaps it's a bad idea and shouldn't be supported?
     // I mean having a mock return a mock implies a lot of assumptions are being made
-    /*
+/*
     // Mock methods
-    MockMethod<SimpleExampleClass.ReturnedClass> getReturned = new MockMethod<>(returned, "getReturned");
+    MockMethod<ReturnedClass> getReturned = new MockMethod<>(returned, "getReturned");
     // Mock the Class
     SimpleExampleClass example = mock(SimpleExampleClass.class, getReturned);
     System.out.println(">>>>>>> " + example.getClass());
+
     // Call the mocked method on the mocked class.
     SimpleExampleClass.ReturnedClass actual = example.getReturned();
     // Then
