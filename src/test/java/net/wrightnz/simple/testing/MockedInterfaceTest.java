@@ -60,7 +60,8 @@ class MockedInterfaceTest {
     ExampleInterface example = mock(ExampleInterface.class, getReturned);
     // Call the mocked method on the mocked interface.
     Returned actual = example.getReturned();
-    assertTrue(actual.getClass().getName().contains("com.sun.proxy.$Proxy"));
+    
+    assertTrue(actual.getClass().getName().contains(".$Proxy"));
     assertEquals("expected", actual.getAnswer());
   }
 
