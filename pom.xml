@@ -9,17 +9,26 @@
     <packaging>jar</packaging>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <distributionManagement>
-        <repository>
+        <!-- <repository>
             <id>github</id>
             <name>GitHub OWNER Apache Maven Packages</name>
             <url>https://maven.pkg.github.com/richard-o-wright/simpleMock</url>
+        </repository>
+        <repository>
+            <id>bintray-repo-simplemock</id>
+            <url>https://api.bintray.com/maven/github@wrightnz.net/maven-repo/simplemock/;publish=1</url>
+        </repository>  -->
+        <repository>
+            <id>central</id>
+            <name>a0xtw5qkaxeee-artifactory-primary-0-releases</name>
+            <url>https://simple.jfrog.io/artifactory/default-libs-release</url>
         </repository>
     </distributionManagement>
 

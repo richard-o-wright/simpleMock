@@ -57,16 +57,15 @@ class MockedClassTest {
 
   @Test
   void testMockClassWithConstructorsMethods() {
-    int expected = 10;
     // Mock methods
-    MockMethod<Integer> getStartX = new MockMethod<>(expected, "getStartX");
+    MockMethod<Integer> getStartX = new MockMethod<>(10, "getStartX");
     // Mock the Class
     ExampleWithConstructorsClass example = mock(ExampleWithConstructorsClass.class, getStartX);
     // Call the mocked method on the mocked interface.
     Point actual = example.getEndPoint();
     // Check the expected mock result was also returned.
     assertEquals(null, actual);
-    assertEquals(expected, example.getStartX());
+    assertEquals(10, example.getStartX());
   }
 
   @Test
@@ -104,8 +103,8 @@ class MockedClassTest {
     assertEquals("-", returned.getAnswer());
 
     // ToDo: Make this fancy recursive stuff work maybe? Or perhaps it's a bad idea and shouldn't be supported?
-    // I mean having a mock return a mock implies a lot of assumptions are being made
-/*
+    // Having a mock return a mock may imply to many assumptions are being made.
+    /*
     // Mock methods
     MockMethod<ReturnedClass> getReturned = new MockMethod<>(returned, "getReturned");
     // Mock the Class

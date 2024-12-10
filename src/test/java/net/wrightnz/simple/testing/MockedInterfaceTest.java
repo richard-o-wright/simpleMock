@@ -35,9 +35,8 @@ class MockedInterfaceTest {
 
   @Test
   void testMockMethods() {
-    String expected = "Fish";
     // Mock a method
-    MockMethod<String> meth1 = new MockMethod<>(expected, "doSomething", int.class, String.class);
+    MockMethod<String> meth1 = new MockMethod<>("Fish", "doSomething", int.class, String.class);
     // Mock an Interface
     ExampleInterface example = mock(ExampleInterface.class, meth1);
     // Call the mocked method on the mocked interface.
@@ -46,7 +45,7 @@ class MockedInterfaceTest {
     // Check the mock method was called n number of times.
     assertEquals(2, meth1.getInvocationCount());
     // Check the expected mock result was also returned.
-    assertEquals(expected, result);
+    assertEquals("Fish", result);
   }
 
   @Test
